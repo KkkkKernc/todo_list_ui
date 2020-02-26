@@ -10,7 +10,12 @@ export interface FetchTodoAction {
 
 export interface CreateTodoAction {
   type: ActionTypes.createTodo;
-  payload: string;
+  payload: Todo;
+}
+
+export interface UpdateTodoAction {
+  type: ActionTypes.updateTodo;
+  payload: Todo;
 }
 
 export interface DeleteTodoAction {
@@ -29,19 +34,37 @@ export const fetchTodo = () => {
   }
 }
 
-export const createTodos = (title: string) => {
+export const createTodo = (title: string) => {
   return async (dispatch: Dispatch) => {
+    const response = await axios.post<Todo>('http://localhost:8080/api/todo', { title });
 
     dispatch<CreateTodoAction>({
       type: ActionTypes.createTodo,
-      payload: title
+      payload: response.data
     });
   }
 }
 
-export const deleteTodo = (id: number): DeleteTodoAction => {
-  return {
-    type: ActionTypes.deleteTodo,
-    payload: id
+export const updateTodo = (todo: Todo) => {
+  return async (dispatch: Dispatch) => {
+    const response = await axios.put<Todo>(`http://localhost:8080/api/todos/${todo.id}`, todo)
+
+    dispatch<UpdateTodoAction>({
+      type: ActionTypes.updateTodo,
+      payload: response.data
+    })
+  }
+}
+
+export const deleteTodo = (id: number) => {
+  return async (dispatch: Dispatch) => {
+    const response = await axios.delete<any>(`http://localhost:8080/api/todos/${id}`);
+
+    if (response.status === 200 && response.data.deleteCount > 0) {
+      dispatch<DeleteTodoAction>({
+        type: ActionTypes.deleteTodo,
+        payload: id
+      })
+    }
   }
 }

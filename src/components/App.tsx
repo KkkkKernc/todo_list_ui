@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTodo, deleteTodo } from '../actions';
+import { fetchTodo, updateTodo, createTodo } from '../actions';
 import { Todo, StoreState } from '../reducers';
 
 export const App: React.FC = () => {
@@ -11,8 +11,6 @@ export const App: React.FC = () => {
   // componentDidMount，componentDidUpdate 和 componentWillUnmount
   useEffect(() => {
     if (!todos.length) {
-      setFetching(true);
-      dispatch(fetchTodo())
       setFetching(false);
     }
   }, [todos.length]);
@@ -21,18 +19,26 @@ export const App: React.FC = () => {
     <div key={todo.id}>
       <button
         style={{ border: '1px solid black' }}
-        onClick={() => dispatch(deleteTodo(todo.id))}>
-        {todo.title}
+        onClick={() => dispatch(updateTodo({
+          id: todo.id,
+          title: todo.title,
+          completed: !todo.completed
+        }))}>
+        {todo.title} {todo.completed}
       </button>
     </div>
   ));
 
   return (
     <div>
+      <button onClick={() => {
+          dispatch(createTodo('test create Todo'))
+        }}>
+        创建
+      </button>
       <button
         onClick={() => {
           dispatch(fetchTodo());
-          setFetching(true);
           }}>
         获取
       </button>
