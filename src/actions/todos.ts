@@ -60,7 +60,7 @@ export const deleteTodo = (id: number) => {
   return async (dispatch: Dispatch) => {
     const response = await axios.delete<any>(`http://localhost:8080/api/todos/${id}`);
 
-    if (response.status === 200 && response.data.deleteCount > 0) {
+    if (response.status === 200 && response.data.deletedCount > 0) {
       dispatch<DeleteTodoAction>({
         type: ActionTypes.deleteTodo,
         payload: id
